@@ -12,11 +12,24 @@ set are installed.
 | Compacted daily totals | `~/Library/Application Support/Factory Log/daily-aggregates.json` |
 | Narrative cache | `~/Library/Application Support/Factory Log/narratives.json` |
 | User CLI | `~/.local/bin/factorylog` |
+| PATH line for zsh | `~/.zshenv` |
 | Codex instructions | `~/.codex/AGENTS.md` |
+| Codex sandbox access | `~/.codex/config.toml` |
 | Cursor rule | `~/.cursor/rules/factory-log.mdc` |
 
 The welcome screen and Settings install the bundled CLI and only change agent files
-after the user presses the corresponding button.
+after the user presses the corresponding button. **Add to PATH** appears only when
+the login shell is zsh and can't find `factorylog`, and appends one `export` line
+to `~/.zshenv`. **Connect Codex** appends a `[sandbox_workspace_write]` section
+with the log folder in `writable_roots` to `~/.codex/config.toml`, unless the file
+already mentions the folder, uses `danger-full-access`, or has a sandbox section of
+its own, which the app never edits. Both append in place, so a dotfile that is a
+symlink stays one.
+
+Whether `factorylog` is on the PATH comes from running `command -v factorylog` in
+the user's login shell, because that shell, not the app, sets the PATH agents see.
+**Send a test report** runs `factorylog start` and `factorylog archive` the same
+way, for a closed task called "Test report" in a project named Factory Log.
 
 The detailed-history setting controls only the preview and explicit purge
 action. Factory Log never compacts history on a timer or at launch.

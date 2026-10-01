@@ -56,6 +56,8 @@ struct SetupChecklist: View {
     var showsWaitingStep = false
 
     @State private var setup = AgentSetupStatus.current
+    @State private var path = CommandLinePath.checking
+    @State private var isSendingTestReport = false
     @State private var message: String?
     @State private var error: String?
 
@@ -66,19 +68,10 @@ struct SetupChecklist: View {
             step(
                 number: 1,
                 title: "Install the command-line tool",
-                detail: "Agents run `factorylog` to report their work. It goes in `~/.local/bin`, so check that folder is on your PATH.",
-                isDone: setup.commandLineTool
+                detail: commandLineDetail,
+                isDone: setup.commandLineTool && !isOffPath
             ) {
-                let install = Button(setup.commandLineTool ? "Reinstall" : "Install CLI") {
-                    perform("Installed `factorylog` in ~/.local/bin.") {
-                        _ = try installer.installCommandLineTool()
-                    }
-                }
-                if setup.commandLineTool {
-                    install
-                } else {
-                    install.buttonStyle(.borderedProminent)
-                }
+                commandLineActions
             }
 
             Divider()
@@ -92,8 +85,8 @@ struct SetupChecklist: View {
                 VStack(alignment: .trailing, spacing: 8) {
                     HStack(spacing: 8) {
                         Button(setup.codex ? "Codex Connected" : "Connect Codex") {
-                            perform("Added the Factory Log instructions to ~/.codex/AGENTS.md.") {
-                                _ = try installer.installCodexInstructions()
+                            perform("Connected Codex. New Codex sessions will report their work.") {
+                                try installer.connectCodex()
                             }
                         }
                         .disabled(setup.codex)
@@ -122,16 +115,23 @@ struct SetupChecklist: View {
                 step(
                     number: 3,
                     title: "Ask an agent to build something",
-                    detail: "Its first report shows up here a second after it's written, and this screen turns into your day.",
+                    detail: "Agents report work that changes something, like a fix or a new feature, not answers to questions. The first report shows up here a second later, and this screen turns into your day.",
                     isDone: false
                 ) {
-                    if setup.isReady {
-                        HStack(spacing: 8) {
-                            ProgressView()
-                                .controlSize(.small)
-                            Text("Waiting for the first report…")
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
+                    if setup.isReady && path == .found {
+                        VStack(alignment: .trailing, spacing: 8) {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .controlSize(.small)
+                                Text("Waiting for the first report…")
+                                    .font(.callout)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Button("Send a test report", action: sendTestReport)
+                                .buttonStyle(.link)
+                                .font(.caption)
+                                .disabled(isSendingTestReport)
                         }
                     }
                 }
@@ -139,24 +139,95 @@ struct SetupChecklist: View {
 
             if let message {
                 Divider()
-                Label(message, systemImage: "checkmark.circle.fill")
-                    .font(.callout)
-                    .foregroundStyle(.green)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
+                Label {
+                    Text(LocalizedStringKey(message))
+                } icon: {
+                    Image(systemName: "checkmark.circle.fill")
+                }
+                .font(.callout)
+                .foregroundStyle(.green)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
             }
             if let error {
                 Divider()
                 Label(error, systemImage: "exclamationmark.triangle.fill")
                     .font(.callout)
                     .foregroundStyle(.red)
+                    .textSelection(.enabled)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
             }
         }
         .dashboardCard(padding: 0)
+        .task {
+            path = await CommandLinePath.check()
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-            setup = .current
+            refresh()
+        }
+    }
+
+    private var isOffPath: Bool {
+        setup.commandLineTool && path == .missing
+    }
+
+    private var commandLineDetail: LocalizedStringKey {
+        guard isOffPath else {
+            return "Agents run `factorylog` to report their work. Factory Log puts it in `~/.local/bin`."
+        }
+        if LoginShell.isZsh {
+            return "It's in `~/.local/bin`, but your shell doesn't look there, so agents can't run it. Add that folder to your PATH."
+        }
+        return "It's in `~/.local/bin`, but your shell doesn't look there, so agents can't run it. Add that folder to your PATH in your \(LoginShell.name) config, then check again."
+    }
+
+    @ViewBuilder
+    private var commandLineActions: some View {
+        if isOffPath {
+            if LoginShell.isZsh {
+                Button("Add to PATH") {
+                    perform("Added `~/.local/bin` to your PATH in `~/.zshenv`. Restart any agent that's already running.") {
+                        try installer.addCommandLineToolToPath()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            } else {
+                Button("Check Again", action: refresh)
+            }
+        } else {
+            let install = Button(setup.commandLineTool ? "Reinstall" : "Install CLI") {
+                perform("Installed `factorylog` in `~/.local/bin`.") {
+                    _ = try installer.installCommandLineTool()
+                }
+            }
+            if setup.commandLineTool {
+                install
+            } else {
+                install.buttonStyle(.borderedProminent)
+            }
+        }
+    }
+
+    private func refresh() {
+        setup = .current
+        Task {
+            path = await CommandLinePath.check()
+        }
+    }
+
+    private func sendTestReport() {
+        isSendingTestReport = true
+        Task {
+            do {
+                try await AgentIntegrationInstaller.sendTestReport()
+                message = "Sent a test report. It's in today's log."
+                error = nil
+            } catch {
+                message = nil
+                self.error = error.localizedDescription
+            }
+            isSendingTestReport = false
         }
     }
 
@@ -202,13 +273,13 @@ struct SetupChecklist: View {
     private func perform(_ successMessage: String, action: () throws -> Void) {
         do {
             try action()
-            setup = .current
             message = successMessage
             error = nil
         } catch {
             message = nil
             self.error = error.localizedDescription
         }
+        refresh()
     }
 }
 

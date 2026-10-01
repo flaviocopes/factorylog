@@ -14,6 +14,7 @@ This file is public. Keep notes about your own machine in `.cursor/rules/*.local
   - `WeekView.swift`, `TimelineCharts.swift`: the week ribbon, the day timeline and the project donut.
   - `ActivityDashboardView.swift`, `PortfolioDashboardView.swift`, `ProjectTime.swift`, `ProjectDetailPanel.swift`, `DashboardData.swift`, `DashboardSharedViews.swift`: Insights and the project panel.
   - `WelcomeView.swift`: the first-run setup and the empty-screen previews.
+  - `AgentSetup.swift`: installing the CLI and agent instructions, the login-shell PATH check, Codex sandbox access and the test report.
   - `AppSettingsView.swift`, `HiddenProjects.swift`, `ProjectPalette.swift`: settings, hidden projects, project colors.
   - `AppUpdater.swift`: in-app updates from GitHub Releases, a copy of a shared template.
   - `DebugSnapshot.swift`: debug builds only, draws the window to a PNG on request.

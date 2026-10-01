@@ -56,138 +56,13 @@ enum HistoryRetention: String, CaseIterable, Identifiable {
     }
 }
 
-struct AgentSetupStatus {
-    let commandLineTool: Bool
-    let codex: Bool
-    let cursor: Bool
-
-    var hasAgentIntegration: Bool {
-        codex || cursor
-    }
-
-    var isReady: Bool {
-        commandLineTool && hasAgentIntegration
-    }
-
-    var setupMessage: String {
-        if !commandLineTool {
-            return "Install the Factory Log command-line tool to receive agent reports."
-        }
-        return "Connect Codex or Cursor to start receiving agent reports."
-    }
-
-    static var current: AgentSetupStatus {
-        let fileManager = FileManager.default
-        let home = fileManager.homeDirectoryForCurrentUser
-        let commandPaths = [
-            home.appending(path: ".local/bin/factorylog").path,
-            "/usr/local/bin/factorylog",
-            "/opt/homebrew/bin/factorylog"
-        ]
-
-        return AgentSetupStatus(
-            commandLineTool: commandPaths.contains(where: fileManager.isExecutableFile(atPath:)),
-            codex: containsFactoryLogInstructions(
-                at: home.appending(path: ".codex/AGENTS.md")
-            ),
-            cursor: containsFactoryLogInstructions(
-                at: home.appending(path: ".cursor/rules/factory-log.mdc")
-            )
-        )
-    }
-
-    private static func containsFactoryLogInstructions(at url: URL) -> Bool {
-        guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
-            return false
-        }
-        return contents.contains("factorylog start") || contents.contains("Record durable work in Factory Log")
-    }
-}
-
-struct AgentIntegrationInstaller {
-    enum InstallError: Error, LocalizedError {
-        case missingBundledFile(String)
-
-        var errorDescription: String? {
-            switch self {
-            case .missingBundledFile(let name):
-                "The app bundle does not contain \(name). Reinstall Factory Log."
-            }
-        }
-    }
-
-    private let fileManager = FileManager.default
-
-    func installCommandLineTool() throws -> URL {
-        let source = Bundle.main.bundleURL
-            .appending(path: "Contents/Helpers/factorylog", directoryHint: .notDirectory)
-        guard fileManager.isExecutableFile(atPath: source.path) else {
-            throw InstallError.missingBundledFile("the command-line tool")
-        }
-
-        let directory = fileManager.homeDirectoryForCurrentUser
-            .appending(path: ".local/bin", directoryHint: .isDirectory)
-        let destination = directory.appending(path: "factorylog", directoryHint: .notDirectory)
-        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        if fileManager.fileExists(atPath: destination.path) {
-            try fileManager.removeItem(at: destination)
-        }
-        try fileManager.copyItem(at: source, to: destination)
-        try fileManager.setAttributes([.posixPermissions: 0o755], ofItemAtPath: destination.path)
-        return destination
-    }
-
-    func installCodexInstructions() throws -> URL {
-        let template = try bundledText(name: "agent-instructions", extension: "md")
-        let directory = fileManager.homeDirectoryForCurrentUser
-            .appending(path: ".codex", directoryHint: .isDirectory)
-        let destination = directory.appending(path: "AGENTS.md", directoryHint: .notDirectory)
-        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-
-        let startMarker = "<!-- factory-log-managed:start -->"
-        let endMarker = "<!-- factory-log-managed:end -->"
-        let existing = (try? String(contentsOf: destination, encoding: .utf8)) ?? ""
-        guard !existing.contains(startMarker) else { return destination }
-
-        let separator = existing.isEmpty || existing.hasSuffix("\n") ? "" : "\n"
-        let updated = "\(existing)\(separator)\n\(startMarker)\n\(template)\n\(endMarker)\n"
-        try Data(updated.utf8).write(to: destination, options: .atomic)
-        return destination
-    }
-
-    func installCursorRule() throws -> URL {
-        let template = try bundledText(name: "cursor-factory-log", extension: "mdc")
-        let directory = fileManager.homeDirectoryForCurrentUser
-            .appending(path: ".cursor/rules", directoryHint: .isDirectory)
-        let destination = directory.appending(path: "factory-log.mdc", directoryHint: .notDirectory)
-        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        try Data(template.utf8).write(to: destination, options: .atomic)
-        return destination
-    }
-
-    func copyAgentInstructions() throws {
-        let template = try bundledText(name: "agent-instructions", extension: "md")
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(template, forType: .string)
-    }
-
-    private func bundledText(name: String, extension fileExtension: String) throws -> String {
-        guard let url = Bundle.main.url(
-            forResource: name,
-            withExtension: fileExtension,
-            subdirectory: "Integrations"
-        ) else {
-            throw InstallError.missingBundledFile("\(name).\(fileExtension)")
-        }
-        return try String(contentsOf: url, encoding: .utf8)
-    }
-}
-
 struct AppSettingsView: View {
     @AppStorage(AppAppearance.storageKey) private var appearance = AppAppearance.system.rawValue
     @AppStorage(HistoryRetention.storageKey) private var historyRetention = HistoryRetention.thirtyDays.rawValue
     @AppStorage(HiddenProjects.storageKey) private var hiddenProjects = HiddenProjects()
     @State private var setup = AgentSetupStatus.current
+    @State private var commandLinePath = CommandLinePath.checking
+    @State private var isSendingTestReport = false
     @State private var setupMessage: String?
     @State private var setupError: String?
     @State private var storageUsage: EventStore.StorageUsage?
@@ -306,12 +181,14 @@ struct AppSettingsView: View {
             Section("Integrations") {
                 integrationRow(
                     "Command-line tool",
-                    detail: "Receives reports from coding agents",
-                    isConfigured: setup.commandLineTool
+                    detail: isCommandLineToolOffPath
+                        ? "In ~/.local/bin, but your \(LoginShell.name) PATH doesn't include it"
+                        : "Receives reports from coding agents",
+                    isConfigured: setup.commandLineTool && commandLinePath != .missing
                 )
                 integrationRow(
                     "Codex",
-                    detail: "Instructions in ~/.codex/AGENTS.md",
+                    detail: "Instructions in ~/.codex/AGENTS.md, log folder in its sandbox",
                     isConfigured: setup.codex
                 )
                 integrationRow(
@@ -332,9 +209,16 @@ struct AppSettingsView: View {
                             _ = try installer.installCommandLineTool()
                         }
                     }
+                    if isCommandLineToolOffPath && LoginShell.isZsh {
+                        Button("Add to PATH") {
+                            performSetup("Added ~/.local/bin to your PATH in ~/.zshenv. Restart any agent that's already running.") {
+                                try installer.addCommandLineToolToPath()
+                            }
+                        }
+                    }
                     Button(setup.codex ? "Codex Connected" : "Connect Codex") {
-                        performSetup("Added Factory Log instructions to ~/.codex/AGENTS.md.") {
-                            _ = try installer.installCodexInstructions()
+                        performSetup("Connected Codex. New Codex sessions will report their work.") {
+                            try installer.connectCodex()
                         }
                     }
                     .disabled(setup.codex)
@@ -346,10 +230,22 @@ struct AppSettingsView: View {
                     .disabled(setup.cursor)
                 }
 
-                Button("Copy instructions for another agent") {
-                    performSetup("Copied the agent instructions.") {
-                        try installer.copyAgentInstructions()
+                if isCommandLineToolOffPath && !LoginShell.isZsh {
+                    Text("Add ~/.local/bin to your PATH in your \(LoginShell.name) config so agents can run factorylog.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack {
+                    Button("Copy instructions for another agent") {
+                        performSetup("Copied the agent instructions.") {
+                            try installer.copyAgentInstructions()
+                        }
                     }
+                    Button("Send Test Report") {
+                        sendTestReport()
+                    }
+                    .disabled(commandLinePath != .found || isSendingTestReport)
                 }
 
                 if let setupMessage {
@@ -377,7 +273,7 @@ struct AppSettingsView: View {
         .formStyle(.grouped)
         .frame(width: 620, height: 720)
         .onAppear {
-            setup = .current
+            refreshSetup()
             refreshStorageInfo()
         }
         .onChange(of: historyRetention) {
@@ -518,15 +414,41 @@ struct AppSettingsView: View {
         }
     }
 
+    private var isCommandLineToolOffPath: Bool {
+        setup.commandLineTool && commandLinePath == .missing
+    }
+
+    private func refreshSetup() {
+        setup = .current
+        Task {
+            commandLinePath = await CommandLinePath.check()
+        }
+    }
+
     private func performSetup(_ successMessage: String, action: () throws -> Void) {
         do {
             try action()
-            setup = .current
             setupMessage = successMessage
             setupError = nil
         } catch {
             setupMessage = nil
             setupError = error.localizedDescription
+        }
+        refreshSetup()
+    }
+
+    private func sendTestReport() {
+        isSendingTestReport = true
+        Task {
+            do {
+                try await AgentIntegrationInstaller.sendTestReport()
+                setupMessage = "Sent a test report. It's in today's log."
+                setupError = nil
+            } catch {
+                setupMessage = nil
+                setupError = error.localizedDescription
+            }
+            isSendingTestReport = false
         }
     }
 }

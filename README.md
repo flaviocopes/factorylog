@@ -36,13 +36,54 @@ defaults write dev.factorylog.app AppUpdaterAutomaticChecks -bool false
 
 ## Set it up
 
+Agents don't talk to the app directly. Each one runs a small command, `factorylog`, which adds a line to a log file on your Mac, and the app shows the new line a second later. So setting up comes down to two things: the agent can run `factorylog`, and it knows when to.
+
 The first time you open Factory Log, it walks you through three steps:
 
-1. **Install the command-line tool.** Agents report through `factorylog`, which the app copies to `~/.local/bin`. Make sure that folder is on the `PATH` your agent uses.
-2. **Connect your agent.** One click adds a short instruction to `~/.codex/AGENTS.md` for Codex, or a rule to `~/.cursor/rules` for Cursor. Using something else? Copy the instructions and paste them into your agent's instructions file.
-3. **Ask an agent to build something.** Its first report lands a second later, and the welcome screen turns into your day.
+1. **Install the command-line tool.** The app copies `factorylog` to `~/.local/bin`. Then it asks your login shell whether it can find the command there, because agents get their `PATH` from that shell. If it can't, and you use zsh, the macOS default, **Add to PATH** adds the folder to `~/.zshenv`.
+2. **Connect your agent.** For Codex, one click adds a short instruction to `~/.codex/AGENTS.md`. It also adds the log folder to Codex's sandbox in `~/.codex/config.toml`, so `factorylog` is allowed to write to it. For Cursor, it adds a rule to `~/.cursor/rules`. The instruction tells the agent when to report, and what never to include.
+3. **Ask an agent to build something.** Agents report work that changes something, like a fix, a feature or new docs. Questions and explanations aren't logged. The first report lands a second later, and the welcome screen turns into your day. **Send a test report** checks the command and the log without waiting for an agent.
 
 <img src="docs/screenshot-welcome-light.png" alt="The Factory Log welcome screen with the three setup steps" />
+
+The same buttons live in **Settings → Integrations**, for when you add an agent later.
+
+### Other agents
+
+Any agent that can run shell commands can report. Click **Copy the instructions** on the welcome screen or in Settings, and paste them where your agent keeps its standing instructions:
+
+- Claude Code reads `~/.claude/CLAUDE.md`.
+- Gemini CLI reads `~/.gemini/GEMINI.md`.
+- Most other agents read an `AGENTS.md` file at the root of each project.
+
+If the agent runs commands in a sandbox, it also needs permission to write to `~/Library/Application Support/Factory Log`.
+
+### If reports don't show up
+
+Go through these in order:
+
+1. **Check that your shell finds the command.** Open a new Terminal window and run `command -v factorylog`. It should print a path that ends in `.local/bin/factorylog`. If it prints nothing, add the folder to your `PATH`:
+
+   ```sh
+   # zsh, the macOS default
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshenv
+
+   # fish
+   fish_add_path ~/.local/bin
+   ```
+
+   On bash, add the same `export` line to `~/.bash_profile`. Then restart your agent, so it picks up the new `PATH`.
+2. **Send a test report** from **Settings → Integrations**. If it shows up in Today, the command and the app both work, and the problem is on the agent's side.
+3. **Start a new agent session.** Agents read their instructions when a session starts, so a session that was already open hasn't seen them. Cursor might need a restart to notice a new rule.
+4. **Check Codex's sandbox.** If Codex can't write the log, open `~/.codex/config.toml` and make sure the log folder is in its writable roots, written out in full:
+
+   ```toml
+   [sandbox_workspace_write]
+   writable_roots = ["/Users/you/Library/Application Support/Factory Log"]
+   ```
+
+   If the file already has a `[sandbox_workspace_write]` section, add the path to its `writable_roots` list. The app leaves an existing section alone, so this is the case it can't fix for you.
+5. **Ask for real work.** A question, an explanation or a status check isn't logged, by design.
 
 ## Features
 

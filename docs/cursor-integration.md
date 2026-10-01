@@ -1,8 +1,8 @@
 # Cursor integration
 
 Factory Log ships a portable always-apply Cursor rule at
-`Integrations/cursor-factory-log.mdc`. The downloaded app can install the CLI
-and copy this rule to `~/.cursor/rules/factory-log.mdc` from Settings.
+`Integrations/cursor-factory-log.mdc`. **Connect Cursor**, on the welcome
+screen or in Settings, copies this rule to `~/.cursor/rules/factory-log.mdc`.
 
 For manual setup:
 
