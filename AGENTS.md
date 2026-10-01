@@ -54,7 +54,7 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - Summaries describe one person plus agents, never "the team": write "Implemented X, Y, Z" in plain past tense.
 - On past days the Summary tab shows only project name, time, and one sentence per project; the Log tab shows every individual update.
 - Keyboard: ⌘1 to ⌘4 switch screens; Left/Right arrows switch between Summary and Log on a day and between weeks on Week; Esc leaves a project filter, then a day opened from another screen.
-- Videos and showreels use a light background and no background sound.
+- Videos and showreels use a light background and keep sound effects, with no background music or noise.
 
 ## Learned Workspace Facts
 
@@ -62,5 +62,6 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - Day summaries use a local Ollama model (`gemma3:4b` by default; override with `FACTORYLOG_OLLAMA_MODEL` and `FACTORYLOG_OLLAMA_HOST`) cached in `narratives.json`, keyed by the day's start formatted in UTC. No cloud AI. Counts and task titles stay computed from events and are the fallback when no sentence exists.
 - Active time is estimated, not tracked: updates in a project at most 45 minutes apart form a session, plus 5 minutes of lead-in. Automatic archives count for nothing and don't make a task active on a day.
 - Work done inside an agent's own folder (`~/.cursor`, `~/.codex`, `~/.claude`, `~/.agents`) never shows in the app.
-- `Scripts/import-git-history.py` backfills gaps from local Git commits: one task per 45-minute commit session, skipping commits existing tasks already cover. Re-runs are safe because task IDs are deterministic.
+- `Scripts/import-git-history.py` backfills gaps from local Git commits: one task per 45-minute commit session, skipping commits existing tasks already cover. Re-runs are safe because task IDs are deterministic. It sends commit subjects to `cursor-agent` for titles unless you pass `--no-titles`.
+- `Scripts/verify-release.zsh` fails if any tracked file contains the builder's home folder path, so tracked files use `~` or repo-relative paths.
 - `screencapture` doesn't work from an agent shell without Screen Recording permission. Debug builds draw their own window on a distributed notification instead; see `.cursor/rules/restart-app-after-change.mdc`.
