@@ -2,7 +2,7 @@
 
 Factory Log follows semantic versioning.
 
-## Unreleased
+## 1.1.0 — 2026-10-01
 
 - Setup checks that your login shell can find `factorylog`, since agents get their `PATH` from it. On zsh, **Add to PATH** fixes it in `~/.zshenv`.
 - **Connect Codex** also adds the log folder to Codex's sandbox in `~/.codex/config.toml`, so Codex can write its reports.
