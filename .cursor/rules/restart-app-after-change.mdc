@@ -1,0 +1,64 @@
+---
+description: Always rebuild and restart the Factory Log app after changing app or core source
+alwaysApply: true
+---
+
+# Restart the app after every change
+
+After changing anything under `Sources/`, rebuild the app bundle and restart the
+running app. Do not leave the user looking at a stale build. The app does not
+hot-reload, so an unrestarted app still shows the previous code.
+
+Run this from the repository root:
+
+```bash
+osascript -e 'quit app "Factory Log"' 2>/dev/null; sleep 1
+pkill -f 'MacOS/FactoryLog' 2>/dev/null; sleep 1
+zsh Scripts/build-app.zsh debug
+open ".build/Factory Log.app"
+```
+
+Always restart the `.app` bundle, not the bare `.build/debug/FactoryLogApp`
+binary. Only the bundle has `Info.plist` and a code signature, so only it
+behaves like a real GUI app.
+
+Then confirm the new process is alive:
+
+```bash
+pgrep -fl 'MacOS/FactoryLog'
+```
+
+## Verifying the window
+
+`swift build` succeeding is not proof the UI works. To check the app really has
+an on-screen window, ask the window server. `System Events` via `osascript`
+fails here with "not allowed assistive access", so do not rely on it.
+
+`screencapture` does not work from the agent shell: it lacks Screen Recording
+permission, so full-screen captures show only the wallpaper and
+`screencapture -l <id>` fails with "could not create image from window". This
+is not the app being broken.
+
+To see the window, ask the debug build to draw itself. It listens for a
+distributed notification whose object is `screen|output-path`. `screen` is
+`today`, `yesterday`, `week` or `insights`, optionally followed by
+`@<project path>` to open that project's panel in Insights. Leave it empty to
+keep the current screen.
+
+```bash
+swift -e 'import Foundation; DistributedNotificationCenter.default().postNotificationName(.init("dev.factorylog.debug.snapshot"), object: "week|/tmp/week.png", userInfo: nil, deliverImmediately: true)'
+```
+
+The PNG appears about a second later. A window launched from a script draws as
+inactive, so for publishable images launch with `--args -DebugActiveWindow YES`,
+or run `zsh Scripts/screenshots.zsh`, which does that against a demo log. The hook only exists in debug builds,
+and `Scripts/verify-release.zsh` replaces the bundle with a release build, so
+rebuild with `build-app.zsh debug` before taking snapshots.
+
+If a restored window is mispositioned or invisible, clear the saved window
+state and relaunch. Don't delete the `dev.factorylog.app` defaults domain: it
+holds user preferences such as hidden projects.
+
+```bash
+rm -rf ~/Library/Saved\ Application\ State/dev.factorylog.app.savedState
+```

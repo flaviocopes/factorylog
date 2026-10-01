@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factorylog.dev/spec/darp/1.0/schema.json",
+  "title": "DARP 1.0 record",
+  "description": "A Durable Activity Record Protocol record for developer work.",
+  "type": "object",
+  "required": [
+    "specVersion",
+    "id",
+    "sequence",
+    "occurredAt",
+    "recordedAt",
+    "kind",
+    "project",
+    "task",
+    "source",
+    "summary"
+  ],
+  "properties": {
+    "specVersion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "previousID": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recordedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "kind": {
+      "enum": [
+        "task.started",
+        "task.progressed",
+        "task.blocked",
+        "task.completed",
+        "task.abandoned"
+      ]
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "task": {
+      "$ref": "#/$defs/task"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "^[^\\r\\n]+$"
+    },
+    "outcome": {
+      "$ref": "#/$defs/outcome"
+    },
+    "amendment": {
+      "$ref": "#/$defs/amendment"
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9]+(?:\\.[a-z0-9-]+)+$"
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "sequence": {
+            "const": 1
+          }
+        },
+        "required": ["sequence"]
+      },
+      "then": {
+        "properties": {
+          "kind": {
+            "const": "task.started"
+          }
+        },
+        "not": {
+          "required": ["previousID"]
+        }
+      },
+      "else": {
+        "required": ["previousID"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "amendment": {
+            "properties": {
+              "action": {
+                "const": "retract"
+              }
+            },
+            "required": ["action"]
+          }
+        },
+        "required": ["amendment"]
+      },
+      "then": {
+        "not": {
+          "required": ["outcome"]
+        }
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "kind": {
+              "enum": ["task.progressed", "task.completed"]
+            }
+          },
+          "required": ["kind"]
+        },
+        "then": {
+          "required": ["outcome"]
+        },
+        "else": {
+          "not": {
+            "required": ["outcome"]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "project": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "locator": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "pattern": "^[^\\r\\n]+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["tool"],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$"
+        },
+        "sessionID": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      },
+      "additionalProperties": false
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["category", "verification"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[a-z][a-z0-9.-]*$"
+        },
+        "verification": {
+          "$ref": "#/$defs/verification"
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["verified", "not-verified"]
+        },
+        "methods": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[a-z][a-z0-9.-]*$"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "verified"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["methods"]
+          },
+          "else": {
+            "not": {
+              "required": ["methods"]
+            }
+          }
+        }
+      ]
+    },
+    "amendment": {
+      "type": "object",
+      "required": ["targetID", "action", "reason"],
+      "properties": {
+        "targetID": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "action": {
+          "enum": ["replace", "retract"]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\r\\n]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

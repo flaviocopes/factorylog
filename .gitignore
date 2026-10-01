@@ -1,0 +1,9 @@
+.build/
+dist/
+.swiftpm/
+.DS_Store
+__pycache__/
+*.pyc
+/factorylog-showreel.mp4
+.cursor/hooks/state/
+.cursor/rules/*.local.mdc

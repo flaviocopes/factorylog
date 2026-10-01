@@ -1,0 +1,12 @@
+---
+description: Record durable work in Factory Log
+alwaysApply: true
+---
+
+# Factory Log
+
+Use `factorylog` for tasks that create durable outcomes. Start before making
+changes, report meaningful milestones, and archive completed work. Preserve the
+task ID returned by `factorylog start`. Leave blocked tasks open after reporting
+the blocker. Do not record code, diffs, terminal output, secrets, scores, or
+guessed progress percentages. Skip read-only answers and status checks.

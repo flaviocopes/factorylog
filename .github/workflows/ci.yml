@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify the release contract
+        run: zsh Scripts/verify-release.zsh
+
+      - name: Build the release zip
+        run: zsh Scripts/build-release.zsh
