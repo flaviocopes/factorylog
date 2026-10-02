@@ -64,5 +64,7 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - Active time is estimated, not tracked: updates in a project at most 45 minutes apart form a session, plus 5 minutes of lead-in. Automatic archives count for nothing and don't make a task active on a day.
 - Work done inside an agent's own folder (`~/.cursor`, `~/.codex`, `~/.claude`, `~/.agents`) never shows in the app.
 - `Scripts/import-git-history.py` backfills gaps from local Git commits: one task per 45-minute commit session, skipping commits existing tasks already cover. Re-runs are safe because task IDs are deterministic. It sends commit subjects to `cursor-agent` for titles unless you pass `--no-titles`.
+- Agents run the `factorylog` copy in `~/.local/bin`, which only Install or Reinstall CLI and `Scripts/install-cli.zsh` write. App updates don't refresh it, so it can be older than the source. Reinstall it before testing CLI changes through an agent.
+- `docs/rfcs/` holds the draft DARP RFC and schema. Factory Log follows DARP's ideas, but its schema version 1 records aren't DARP 1.0 records and no adapter exists, so don't call its output DARP.
 - `Scripts/verify-release.zsh` fails if any tracked file contains the builder's home folder path, so tracked files use `~` or repo-relative paths.
 - `screencapture` doesn't work from an agent shell without Screen Recording permission. Debug builds draw their own window on a distributed notification instead; see `.cursor/rules/restart-app-after-change.mdc`.
