@@ -2,6 +2,11 @@
 
 Factory Log follows semantic versioning.
 
+## 1.2.0 — 2026-10-03
+
+- **Signed and notarized.** Factory Log is now signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS no longer says it "could not verify Factory Log is free of malware", so you don't need **Open Anyway** or Terminal. It asks the usual question about opening an app downloaded from the internet, and you click **Open**.
+- Nothing else changed. Your event log, the `factorylog` CLI and the agent instructions stay the same.
+
 ## 1.1.0 — 2026-10-01
 
 - Setup checks that your login shell can find `factorylog`, since agents get their `PATH` from it. On zsh, **Add to PATH** fixes it in `~/.zshenv`.

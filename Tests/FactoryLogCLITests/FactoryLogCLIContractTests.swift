@@ -6,7 +6,7 @@ func cliReportsItsReleaseVersion() throws {
     let result = try runCLI(["--version"])
 
     #expect(result.status == 0)
-    #expect(result.stdout == "factorylog 1.1.0\n")
+    #expect(result.stdout == "factorylog 1.2.0\n")
     #expect(result.stderr.isEmpty)
 }
 

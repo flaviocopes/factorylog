@@ -45,8 +45,12 @@ fi
 
 codesign --verify --deep --strict --verbose=2 "$APP_PATH"
 SIGNATURE_INFO=$(codesign -dvv "$APP_PATH" 2>&1)
-if [[ "$SIGNATURE_INFO" != *"Signature=adhoc"* ]]; then
-  print -u2 "Expected the default no-fee release build to use an ad hoc signature."
+if [[ "$SIGNATURE_INFO" == *"Signature=adhoc"* ]]; then
+  :
+elif [[ "$SIGNATURE_INFO" == *"TeamIdentifier=DGFKNTAG99"* && "$SIGNATURE_INFO" == *"flags=0x10000"* ]]; then
+  :
+else
+  print -u2 "Expected an ad hoc signature or Developer ID (team DGFKNTAG99) with hardened runtime."
   exit 1
 fi
 

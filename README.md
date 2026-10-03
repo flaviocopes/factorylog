@@ -6,23 +6,13 @@ When agents work across five projects in a day, it's hard to say in the evening 
 
 ## Download
 
-Get `Factory-Log-1.1.0.zip` from the [latest release](https://github.com/flaviocopes/factorylog/releases/latest), unzip it, and drag Factory Log to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
+Get `Factory-Log-1.2.0.zip` from the [latest release](https://github.com/flaviocopes/factorylog/releases/latest), unzip it, and drag Factory Log to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
 
 ### Opening it the first time
 
-Factory Log isn't signed with an Apple Developer ID or notarized by Apple. So the first time you open it, macOS says it "could not verify Factory Log is free of malware". Click **Done**, then allow it in one of two ways.
+Factory Log is signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS asks if you're sure you want to open an app downloaded from the internet. Click **Open**.
 
-In System Settings, open **Privacy & Security** and scroll down to the message about Factory Log. Click **Open Anyway**, confirm, and open the app again. The button shows up for about an hour after you try to open the app.
-
-In Terminal, remove the quarantine flag macOS adds to downloaded files, then open the app:
-
-```sh
-xattr -dr com.apple.quarantine "/Applications/Factory Log.app"
-```
-
-The same command fixes a message saying Factory Log is damaged. You don't need to turn off Gatekeeper for either option.
-
-On a work laptop you might not be able to install apps in `/Applications`. You can keep Factory Log in the `Applications` folder inside your home folder, and run the command on `~/Applications/Factory Log.app`. If your company blocks apps that aren't notarized, ask your IT team.
+On a work laptop you might not be able to install apps in `/Applications`. You can keep Factory Log in the `Applications` folder inside your home folder instead.
 
 ### Updates
 
@@ -177,7 +167,13 @@ To build the release zip, run:
 zsh Scripts/build-release.zsh
 ```
 
-It builds a universal app, checks its signature, and zips it into `dist/`. The app is ad-hoc signed, and a copy you build yourself opens without a warning.
+It builds a universal app, signs it with my Developer ID when that certificate is in the keychain (ad hoc everywhere else), notarizes when signed that way, and zips it into `dist/`.
+
+A copy you build yourself opens without a warning on your Mac. If you send it to another Mac, macOS says it "could not verify Factory Log is free of malware". Click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**, or remove the quarantine flag in Terminal:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Factory Log.app"
+```
 
 ## Development
 

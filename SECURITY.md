@@ -38,9 +38,9 @@ manages the same files.
 
 ## Release integrity
 
-Releases on GitHub are universal and ad hoc signed, not Developer ID signed or
-notarized. The README and the release notes explain the one-time
-**Privacy & Security → Open Anyway** step, and every release lists the zip's
+Releases on GitHub are universal. Official builds from Flavio's Mac are signed
+with his Apple Developer ID (team `DGFKNTAG99`) and notarized by Apple. CI
+builds are ad hoc signed for verification only. Every release lists the zip's
 SHA-256.
 
 The in-app updater only installs a release whose zip matches the SHA-256 digest

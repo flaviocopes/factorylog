@@ -1,6 +1,6 @@
 # Releasing
 
-Factory Log ships as a universal, ad-hoc signed app on GitHub Releases. There's no Developer ID and no notarization, so the README and the release notes explain the one-time Gatekeeper prompt. Installed copies update themselves from the latest release.
+Factory Log ships as a universal app on GitHub Releases, signed with Flavio's Developer ID (team `DGFKNTAG99`) and notarized by Apple when the release is built on a Mac with that certificate in the keychain. CI and forks build ad hoc signed zips instead. Installed copies update themselves from the latest release.
 
 ## The release contract
 
@@ -19,7 +19,7 @@ GitHub computes the SHA-256 digest of every upload, and the updater refuses a zi
 2. Add the release to `CHANGELOG.md`.
 3. Run `zsh Scripts/verify-release.zsh`.
 4. Commit, tag `vX.Y.Z`, and push the commit and the tag.
-5. Run `zsh Scripts/build-release.zsh` on the tagged commit. It prints the zip's path and SHA-256.
+5. Run `zsh Scripts/build-release.zsh` on the tagged commit on a Mac with the Developer ID certificate and a notarytool profile named `notary`. It notarizes and staples the app, then prints the zip's path and SHA-256.
 6. Write the notes with what's new first, then an `## Install` section and the checksum. The update dialog shows the notes up to `## Install`.
 7. `gh release create vX.Y.Z dist/Factory-Log-X.Y.Z.zip --title "Factory Log X.Y" --notes-file notes.md --verify-tag`
 8. Download the zip from the release page, check its checksum, unzip it with `ditto -x -k`, and run `codesign --verify --deep --strict` on the app.

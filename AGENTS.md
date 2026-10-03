@@ -31,7 +31,7 @@ swift test                               # core and CLI tests
 zsh Scripts/build-app.zsh debug          # .build/Factory Log.app
 open ".build/Factory Log.app"
 zsh Scripts/verify-release.zsh           # tests, universal release build, signatures, concurrent writes
-zsh Scripts/build-release.zsh            # dist/Factory-Log-<version>.zip for a GitHub release
+zsh Scripts/build-release.zsh            # dist/Factory-Log-<version>.zip; notarizes when Developer ID signed
 zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated demo log
 ```
 
@@ -43,7 +43,7 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - User-facing mutations go through `EventStore.appendValidated(_:)`. Don't bypass its cross-process transaction.
 - Concurrency changes need a multi-writer regression test.
 - `Sources/FactoryLogApp/AppUpdater.swift` is a copy of a template shared by several apps. Don't edit it here.
-- The release contract, or installed copies can't update: the tag is `vX.Y.Z`, equal to `CFBundleShortVersionString` in `Resources/FactoryLog-Info.plist` and `FactoryLogVersion.current`. The release is the latest one, not a draft or prerelease, with one universal, ad-hoc signed zip made by `Scripts/build-release.zsh`, `Factory Log.app` at its top. The notes start with what's new, since the update dialog shows them up to `## Install`.
+- Releases are signed with Flavio's Developer ID (team `DGFKNTAG99`) with the hardened runtime, and notarized by `Scripts/build-release.zsh`. It needs the certificate in the keychain and a notarytool keychain profile named `notary`. CI and forks have no certificate, so `Scripts/build-app.zsh` signs ad-hoc there. The release contract, or installed copies can't update: the tag is `vX.Y.Z`, equal to `CFBundleShortVersionString` in `Resources/FactoryLog-Info.plist` and `FactoryLogVersion.current`. The release is the latest one, not a draft or prerelease, with one universal zip made by `Scripts/build-release.zsh`, `Factory Log.app` at its top. The notes start with what's new, since the update dialog shows them up to `## Install`.
 - Screenshots and videos use generated demo data, never a real event log.
 - After changing anything under `Sources/`, rebuild and relaunch the app bundle (`.cursor/rules/restart-app-after-change.mdc`).
 
