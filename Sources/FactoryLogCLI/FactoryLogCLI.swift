@@ -104,6 +104,14 @@ enum FactoryLogCLI {
                 print("factorylog \(FactoryLogVersion.current)")
                 return
             }
+            if arguments.first == "capabilities" {
+                let json = arguments.dropFirst().contains("--json")
+                if arguments.dropFirst().contains(where: { $0 != "--json" }) {
+                    throw CLIError.invalidArguments("Unknown option for 'capabilities'. Use --json.")
+                }
+                try FactoryLogCapabilities.printManifest(json: json)
+                return
+            }
 
             let result = try run(arguments)
             try writeJSON(result, to: .standardOutput)
@@ -286,12 +294,16 @@ enum FactoryLogCLI {
     }
 
     private static let usage = """
-    Factory Log records short, agent-written task updates.
+    factorylog \(FactoryLogVersion.current)
+    Records short, agent-written task updates for the Factory Log app.
 
-    Usage:
-      factorylog start --title <title> --summary <summary> [options]
-      factorylog report --task-id <id> --summary <summary> [options]
-      factorylog archive --task-id <id> --summary <summary> [options]
+    Usage: factorylog <command> [options]
+
+    Commands:
+      start         Start a task and append a started event to the log.
+      report        Append a progress update to an open task.
+      archive       Close a task with a final summary.
+      capabilities  What factorylog can do, and what changed in each version.
 
     Start options:
       --project-path <path>  Absolute project path. Defaults to the current directory.

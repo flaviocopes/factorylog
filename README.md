@@ -111,7 +111,7 @@ factorylog report --task-id task_123 --summary "Added validation and tests."
 factorylog archive --task-id task_123 --summary "Finished and verified account settings."
 ```
 
-`start` returns the task ID in its JSON output, and the other two use it. Every command prints JSON, takes `--store` to write to another log and `--timestamp` to record a past time, and `factorylog --help` lists the rest. A task left open for 24 hours is marked Done automatically.
+`start` returns the task ID in its JSON output, and the other two use it. Every command prints JSON, takes `--store` to write to another log and `--timestamp` to record a past time, and `factorylog --help` lists the rest. Run `factorylog capabilities` (or `factorylog capabilities --json`) when an agent needs a summary of what the CLI can do and what changed in each release. A task left open for 24 hours is marked Done automatically.
 
 ## Privacy
 

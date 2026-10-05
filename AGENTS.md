@@ -7,7 +7,7 @@ This file is public. Keep notes about your own machine in `.cursor/rules/*.local
 ## Files
 
 - `Sources/FactoryLogCore/`: the event model and JSON contract, `EventStore` (locked appends, validation, compaction), `FactoryLogHistory` (tasks, days, projects), `FactoryLogActiveTime` (work sessions and estimated time), `EventStoreWatcher`, and `DayNarrator` (optional one-sentence recaps from a local Ollama model).
-- `Sources/FactoryLogCLI/`: the `factorylog` command agents call.
+- `Sources/FactoryLogCLI/`: the `factorylog` command agents call. The agent-ready manifest lives in `FactoryLogCapabilities.swift`; every version bump adds a changelog entry there.
 - `Sources/FactoryLogApp/`: the SwiftUI app.
   - `FactoryLogApp.swift`: the window, the Today, Yesterday, Week and Insights screens, reloading, and the update menu item.
   - `DayView.swift`, `DaySummaryView.swift`: one day, with its timeline, summary and log.

@@ -11,6 +11,30 @@ func cliReportsItsReleaseVersion() throws {
 }
 
 @Test
+func cliHelpListsCapabilitiesCommand() throws {
+    let result = try runCLI(["--help"])
+
+    #expect(result.status == 0)
+    #expect(result.stdout.contains("capabilities"))
+    #expect(result.stderr.isEmpty)
+}
+
+@Test
+func cliCapabilitiesManifestEncodesExpectedKeys() throws {
+    let result = try runCLI(["capabilities", "--json"])
+
+    #expect(result.status == 0)
+    #expect(result.stderr.isEmpty)
+
+    let manifest = try json(result.stdout)
+    #expect(manifest["name"] as? String == "factorylog")
+    #expect(manifest["version"] as? String == "1.2.0")
+    #expect(manifest["summary"] as? String != nil)
+    #expect((manifest["capabilities"] as? [[String: Any]])?.isEmpty == false)
+    #expect((manifest["changelog"] as? [[String: Any]])?.isEmpty == false)
+}
+
+@Test
 func cliPreservesItsMachineReadableSuccessAndFailureContract() throws {
     let directory = FileManager.default.temporaryDirectory
         .appending(path: UUID().uuidString, directoryHint: .isDirectory)
