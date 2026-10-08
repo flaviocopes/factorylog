@@ -1,6 +1,6 @@
-# Factory Log event contract
+# Work Tracebook event contract
 
-Factory Log stores one JSON object per line in an append-only event file. Every event is self-contained so the history remains readable even if an agent task is later archived or its source tool is unavailable.
+Work Tracebook stores one JSON object per line in an append-only event file. Every event is self-contained so the history remains readable even if an agent task is later archived or its source tool is unavailable.
 
 ```json
 {
@@ -10,10 +10,10 @@ Factory Log stores one JSON object per line in an append-only event file. Every 
   "timestamp": "2026-07-26T09:41:00Z",
   "kind": "task.reported",
   "project": {
-    "name": "Factory Log",
+    "name": "Work Tracebook",
     "path": "/Users/example/Projects/factory-log"
   },
-  "taskTitle": "Build the Factory Log prototype",
+  "taskTitle": "Build the Work Tracebook prototype",
   "source": {
     "tool": "codex",
     "sessionID": "019f..."
@@ -37,9 +37,9 @@ Required fields:
 
 `source.sessionID` is optional because not every agent tool exposes a stable session identifier. When `source.tool` is `codex`, the CLI records `CODEX_THREAD_ID` automatically if it is available. Source identifiers are open strings so new agent tools remain readable without a schema change.
 
-A task is **Doing** after its first `task.started` event. It becomes **Done** when its first `task.archived` event appears. The app automatically appends an archive event when a task has been open for 24 hours. This also happens when the app next opens or becomes active if the deadline passed while it was closed. Factory Log never infers priority, next actions, progress percentages, or completion from prose. Events are never edited or deleted; corrections are additional `task.reported` events.
+A task is **Doing** after its first `task.started` event. It becomes **Done** when its first `task.archived` event appears. The app automatically appends an archive event when a task has been open for 24 hours. This also happens when the app next opens or becomes active if the deadline passed while it was closed. Work Tracebook never infers priority, next actions, progress percentages, or completion from prose. Events are never edited or deleted; corrections are additional `task.reported` events.
 
-The default store is `~/Library/Application Support/Factory Log/events.jsonl`. Factory Log writers serialize validation and append operations through an interprocess lock and write one complete newline-terminated JSON object at a time. Readers ignore an incomplete final line. Malformed complete records and unsupported schema versions are reported by line number while readable records remain available; mutations stop until those issues are repaired.
+The default store is `~/Library/Application Support/Factory Log/events.jsonl`. Work Tracebook writers serialize validation and append operations through an interprocess lock and write one complete newline-terminated JSON object at a time. Readers ignore an incomplete final line. Malformed complete records and unsupported schema versions are reported by line number while readable records remain available; mutations stop until those issues are repaired.
 
 ## Command-line logger
 
@@ -47,7 +47,7 @@ Agents write events with explicit flags. `start` defaults the project path to th
 
 ```sh
 factorylog start \
-  --title "Build the Factory Log prototype" \
+  --title "Build the Work Tracebook prototype" \
   --summary "Started the command-line logger." \
   --source cursor
 

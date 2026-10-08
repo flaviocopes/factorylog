@@ -1,4 +1,4 @@
-# Factory Log instructions for coding agents
+# Work Tracebook instructions for coding agents
 
 Use `factorylog` to record the work you do in this project.
 

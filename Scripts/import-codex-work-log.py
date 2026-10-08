@@ -42,7 +42,7 @@ class WorkEntry:
 def parse_args() -> argparse.Namespace:
     local_time_zone = system_time_zone()
     today = datetime.now(local_time_zone).date()
-    parser = argparse.ArgumentParser(description="Import the Codex text work log into Factory Log.")
+    parser = argparse.ArgumentParser(description="Import the Codex text work log into Work Tracebook.")
     parser.add_argument("--from-date", type=date.fromisoformat, default=today - timedelta(days=3))
     parser.add_argument("--through-date", type=date.fromisoformat, default=today)
     parser.add_argument("--log", type=Path, default=DEFAULT_WORK_LOG)
@@ -260,7 +260,7 @@ def main() -> None:
     project_mappings = parse_project_maps(args.project_map)
     executable = factorylog_path(args.factorylog)
     if not executable.exists():
-        raise SystemExit("Factory Log CLI not found. Run zsh Scripts/install-cli.zsh first.")
+        raise SystemExit("Work Tracebook CLI not found. Run zsh Scripts/install-cli.zsh first.")
 
     selected = [
         entry

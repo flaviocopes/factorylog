@@ -5,9 +5,9 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>Factory Log</string>
+    <string>Work Tracebook</string>
     <key>CFBundleExecutable</key>
-    <string>FactoryLog</string>
+    <string>Work Tracebook</string>
     <key>CFBundleIdentifier</key>
     <string>dev.factorylog.app</string>
 	<key>CFBundleIconName</key>
@@ -17,13 +17,13 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>Factory Log</string>
+    <string>Work Tracebook</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.2.0</string>
+    <string>1.3.0</string>
     <key>CFBundleVersion</key>
-    <string>120</string>
+    <string>121</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.developer-tools</string>
     <key>LSMinimumSystemVersion</key>

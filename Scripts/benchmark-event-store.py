@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Measure Factory Log write latency on a long history.")
+    parser = argparse.ArgumentParser(description="Measure Work Tracebook write latency on a long history.")
     parser.add_argument("--cli", type=Path, default=Path(".build/release/factorylog"))
     parser.add_argument("--events", type=int, default=10_000)
     parser.add_argument("--reports", type=int, default=5)

@@ -47,7 +47,7 @@ class Session:
 
 def parse_args() -> argparse.Namespace:
     today = datetime.now().astimezone().date()
-    parser = argparse.ArgumentParser(description="Backfill Factory Log from local Git history.")
+    parser = argparse.ArgumentParser(description="Backfill Work Tracebook from local Git history.")
     parser.add_argument("--from-date", type=date.fromisoformat, default=today - timedelta(days=21))
     parser.add_argument("--through-date", type=date.fromisoformat, default=today)
     parser.add_argument(
@@ -356,7 +356,7 @@ def main() -> None:
 
     executable = factorylog_path(args.factorylog)
     if not args.dry_run and not executable.exists():
-        raise SystemExit("Factory Log CLI not found. Run zsh Scripts/install-cli.zsh first.")
+        raise SystemExit("Work Tracebook CLI not found. Run zsh Scripts/install-cli.zsh first.")
 
     covered = coverage_spans(args.store or DEFAULT_STORE)
     codex = codex_sessions()

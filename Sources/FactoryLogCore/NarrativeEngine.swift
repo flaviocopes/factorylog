@@ -2,7 +2,7 @@ import Foundation
 
 /// Turns a prompt into a sentence or two of prose.
 ///
-/// Factory Log only ever asks a local engine to rephrase reports agents already
+/// Work Tracebook only ever asks a local engine to rephrase reports agents already
 /// wrote, so an engine that is missing or switched off is normal rather than an
 /// error: the app falls back to the factual rollup.
 public protocol NarrativeEngine: Sendable {

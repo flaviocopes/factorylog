@@ -1,9 +1,9 @@
 ---
-description: Record durable work in Factory Log
+description: Record durable work in Work Tracebook
 alwaysApply: true
 ---
 
-# Factory Log
+# Work Tracebook
 
 Use `factorylog` for tasks that create durable outcomes. Start before making
 changes, report meaningful milestones, and archive completed work. Preserve the

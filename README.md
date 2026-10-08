@@ -1,22 +1,22 @@
-<img src="docs/banner.png" alt="Factory Log, a timeline of what your coding agents did" />
+<img src="docs/banner.png" alt="Work Tracebook, a timeline of what your coding agents did" />
 
-Factory Log shows what your coding agents did for you: a timeline of each day and each week, and where your time went, project by project. Codex, Cursor or any other agent writes a one-line report when it finishes something, and the report shows up in the app a second later.
+Work Tracebook shows what your coding agents did for you: a timeline of each day and each week, and where your time went, project by project. Codex, Cursor or any other agent writes a one-line report when it finishes something, and the report shows up in the app a second later.
 
-When agents work across five projects in a day, it's hard to say in the evening what actually happened. Factory Log keeps that record for you, written by the agents themselves, in a plain file on your Mac. It never reads your code, your diffs or your terminal.
+When agents work across five projects in a day, it's hard to say in the evening what actually happened. Work Tracebook keeps that record for you, written by the agents themselves, in a plain file on your Mac. It never reads your code, your diffs or your terminal.
 
 ## Download
 
-Get `Factory-Log-1.2.0.zip` from the [latest release](https://github.com/flaviocopes/factorylog/releases/latest), unzip it, and drag Factory Log to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
+Get `Work-Tracebook-1.3.0.zip` from the [latest release](https://github.com/flaviocopes/work-tracebook/releases/latest), unzip it, and drag Work Tracebook to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
 
 ### Opening it the first time
 
-Factory Log is signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS asks if you're sure you want to open an app downloaded from the internet. Click **Open**.
+Work Tracebook is signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS asks if you're sure you want to open an app downloaded from the internet. Click **Open**.
 
-On a work laptop you might not be able to install apps in `/Applications`. You can keep Factory Log in the `Applications` folder inside your home folder instead.
+On a work laptop you might not be able to install apps in `/Applications`. You can keep Work Tracebook in the `Applications` folder inside your home folder instead.
 
 ### Updates
 
-Once a day, Factory Log asks GitHub whether there's a newer version. When there is, it shows what's new, and **Install and Relaunch** puts it in place of the old one. **Factory Log → Check for Updates…** checks right away.
+Once a day, Work Tracebook asks GitHub whether there's a newer version. When there is, it shows what's new, and **Install and Relaunch** puts it in place of the old one. **Work Tracebook → Check for Updates…** checks right away.
 
 To turn off the daily check, run this in Terminal:
 
@@ -28,13 +28,13 @@ defaults write dev.factorylog.app AppUpdaterAutomaticChecks -bool false
 
 Agents don't talk to the app directly. Each one runs a small command, `factorylog`, which adds a line to a log file on your Mac, and the app shows the new line a second later. So setting up comes down to two things: the agent can run `factorylog`, and it knows when to.
 
-The first time you open Factory Log, it walks you through three steps:
+The first time you open Work Tracebook, it walks you through three steps:
 
 1. **Install the command-line tool.** The app copies `factorylog` to `~/.local/bin`. Then it asks your login shell whether it can find the command there, because agents get their `PATH` from that shell. If it can't, and you use zsh, the macOS default, **Add to PATH** adds the folder to `~/.zshenv`.
 2. **Connect your agent.** For Codex, one click adds a short instruction to `~/.codex/AGENTS.md`. It also adds the log folder to Codex's sandbox in `~/.codex/config.toml`, so `factorylog` is allowed to write to it. For Cursor, it adds a rule to `~/.cursor/rules`. The instruction tells the agent when to report, and what never to include.
 3. **Ask an agent to build something.** Agents report work that changes something, like a fix, a feature or new docs. Questions and explanations aren't logged. The first report lands a second later, and the welcome screen turns into your day. **Send a test report** checks the command and the log without waiting for an agent.
 
-<img src="docs/screenshot-welcome-light.png" alt="The Factory Log welcome screen with the three setup steps" />
+<img src="docs/screenshot-welcome-light.png" alt="The Work Tracebook welcome screen with the three setup steps" />
 
 The same buttons live in **Settings → Integrations**, for when you add an agent later.
 
@@ -88,7 +88,7 @@ Go through these in order:
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-today-dark.png" />
-  <img src="docs/screenshot-today-light.png" alt="Today in Factory Log: active time, a timeline of work sessions per project, and every task" />
+  <img src="docs/screenshot-today-light.png" alt="Today in Work Tracebook: active time, a timeline of work sessions per project, and every task" />
 </picture>
 
 <picture>
@@ -115,15 +115,15 @@ factorylog archive --task-id task_123 --summary "Finished and verified account s
 
 ## Privacy
 
-Everything Factory Log records stays on your Mac, in `~/Library/Application Support/Factory Log/`. There are no accounts, no analytics and no server.
+Everything Work Tracebook records stays on your Mac, in `~/Library/Application Support/Factory Log/`. There are no accounts, no analytics and no server.
 
 The app goes online in two cases. Once a day it asks GitHub whether there's a newer version, and it downloads one only when you click **Install and Relaunch**. If you run Ollama, it sends a finished day's report text to it to write the recaps, which stays on your Mac unless you point `FACTORYLOG_OLLAMA_HOST` at another machine.
 
-The reports are whatever your agents write. The instructions Factory Log installs tell them never to include code, diffs, command output or secrets. [PRIVACY.md](PRIVACY.md) has the details.
+The reports are whatever your agents write. The instructions Work Tracebook installs tell them never to include code, diffs, command output or secrets. [PRIVACY.md](PRIVACY.md) has the details.
 
 ## How it works
 
-Factory Log is one Swift package with three parts. `FactoryLogCore` holds the data model, the event store and every query. The `factorylog` command and the SwiftUI app are both thin clients of it, so they can't disagree about what's in the log.
+Work Tracebook is one Swift package with three parts. `FactoryLogCore` holds the data model, the event store and every query. The `factorylog` command and the SwiftUI app are both thin clients of it, so they can't disagree about what's in the log.
 
 ### The log is a text file
 
@@ -139,11 +139,11 @@ A file-system dispatch source tells the app when the log grows, and it reloads i
 
 ### Time is estimated, not tracked
 
-Agents report outcomes, not hours, so Factory Log infers the time from when reports arrive. Within a project, reports at most 45 minutes apart form one work session, and each session gets 5 extra minutes for the work before its first report. Those sessions are the bars in every timeline, and their lengths add up to the active time. Each project is measured on its own, so two agents working in parallel count toward both projects.
+Agents report outcomes, not hours, so Work Tracebook infers the time from when reports arrive. Within a project, reports at most 45 minutes apart form one work session, and each session gets 5 extra minutes for the work before its first report. Those sessions are the bars in every timeline, and their lengths add up to the active time. Each project is measured on its own, so two agents working in parallel count toward both projects.
 
 ### Recaps are cached
 
-For a finished day, Factory Log sends each project's reports to a local Ollama model (`gemma3:4b` by default) and asks for one plain sentence. The sentence is saved in `narratives.json` with a signature of the reports it came from. A new report changes the signature, so a stale recap gets rewritten. The numbers and task titles always come from the log, never from the model.
+For a finished day, Work Tracebook sends each project's reports to a local Ollama model (`gemma3:4b` by default) and asks for one plain sentence. The sentence is saved in `narratives.json` with a signature of the reports it came from. A new report changes the signature, so a stale recap gets rewritten. The numbers and task titles always come from the log, never from the model.
 
 ### Updates verify what they install
 
@@ -158,7 +158,7 @@ You need macOS 15 or later and Xcode 26, for Swift 6.2.
 ```sh
 swift test
 zsh Scripts/build-app.zsh debug
-open ".build/Factory Log.app"
+open ".build/Work Tracebook.app"
 ```
 
 To build the release zip, run:
@@ -169,11 +169,8 @@ zsh Scripts/build-release.zsh
 
 It builds a universal app, signs it with my Developer ID when that certificate is in the keychain (ad hoc everywhere else), notarizes when signed that way, and zips it into `dist/`.
 
-A copy you build yourself opens without a warning on your Mac. If you send it to another Mac, macOS says it "could not verify Factory Log is free of malware". Click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**, or remove the quarantine flag in Terminal:
+A copy you build yourself opens without a warning on your Mac. If you send it to another Mac, macOS says it "could not verify Work Tracebook is free of malware". Click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**.
 
-```sh
-xattr -dr com.apple.quarantine "/Applications/Factory Log.app"
-```
 
 ## Development
 

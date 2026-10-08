@@ -10,13 +10,13 @@ DOING_ID="sample_doing_$SUFFIX"
 DONE_ID="sample_done_$SUFFIX"
 
 if [[ ! -x "$CLI" ]]; then
-  print -u2 "Build Factory Log first with: swift build"
+  print -u2 "Build Work Tracebook first with: swift build"
   exit 1
 fi
 
 "$CLI" start \
   --task-id "$DOING_ID" \
-  --project-name "Factory Log Sample" \
+  --project-name "Work Tracebook Sample" \
   --project-path "$ROOT" \
   --title "Improve the activity timeline" \
   --summary "Started refining the daily activity timeline." \
@@ -30,7 +30,7 @@ fi
 
 "$CLI" start \
   --task-id "$DONE_ID" \
-  --project-name "Factory Log Sample" \
+  --project-name "Work Tracebook Sample" \
   --project-path "$ROOT" \
   --title "Verify local event storage" \
   --summary "Started checking append-only event storage." \

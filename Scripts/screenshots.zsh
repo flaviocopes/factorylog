@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Captures the README screenshots from a generated demo log, in light and dark.
 # A debug build draws its own window on request (DebugSnapshot.swift), so this
-# needs no Screen Recording permission. It quits Factory Log while it runs.
+# needs no Screen Recording permission. It quits Work Tracebook while it runs.
 # Usage: zsh Scripts/screenshots.zsh
 
 set -euo pipefail
@@ -17,16 +17,16 @@ mkdir -p "$DEMO/empty" "$OUT"
 zsh Scripts/build-app.zsh debug >/dev/null
 
 quit_app() {
-  osascript -e 'quit app "Factory Log"' 2>/dev/null || true
+  osascript -e 'quit app "Work Tracebook"' 2>/dev/null || true
   sleep 1
-  pkill -f 'MacOS/FactoryLog' 2>/dev/null || true
+  pkill -f 'MacOS/Work Tracebook' 2>/dev/null || true
   sleep 1
 }
 
 # Launches against a store, in an appearance, at the default window size, in English.
 launch() {
   quit_app
-  open -n --env FACTORYLOG_EVENTS_FILE="$1" ".build/Factory Log.app" --args \
+  open -n --env FACTORYLOG_EVENTS_FILE="$1" ".build/Work Tracebook.app" --args \
     -appearance "$2" -projectTimeRange 30 -ApplePersistenceIgnoreState YES -DebugActiveWindow YES \
     -AppleLanguages '(en)' -AppleLocale en_US
   sleep 8

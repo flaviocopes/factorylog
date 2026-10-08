@@ -1,6 +1,6 @@
 # Codex integration
 
-Factory Log ships a portable instruction template at
+Work Tracebook ships a portable instruction template at
 `Integrations/agent-instructions.md`. **Connect Codex**, on the welcome screen
 or in Settings, appends it to `~/.codex/AGENTS.md`. The addition is wrapped in
 `factory-log-managed` markers and never replaces existing content.
@@ -28,13 +28,13 @@ zsh Scripts/install-cli.zsh
 Then copy the contents of `Integrations/agent-instructions.md` into the global
 or project `AGENTS.md` used by Codex, and add the sandbox section above. Start
 a new Codex session, give it a small task that changes something, and check
-that its reports appear in Factory Log.
+that its reports appear in Work Tracebook.
 
 When Codex starts a task, the CLI records `CODEX_THREAD_ID` if it is available.
 Active tasks with a valid UUID can open directly in Codex from their log row.
 The integration does not copy prompts, transcripts, code, diffs, or terminal
 output.
 
-Factory Log does not require a Codex hook. If you build custom automation, keep
+Work Tracebook does not require a Codex hook. If you build custom automation, keep
 the same explicit start/report/archive semantics and never infer task completion
 from prose.

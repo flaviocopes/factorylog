@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 import FactoryLogCore
 
-/// The first thing a new install shows: what Factory Log does, and the three
+/// The first thing a new install shows: what Work Tracebook does, and the three
 /// steps that get the first report in. It gives way to the day on its own as
 /// soon as that report arrives.
 struct WelcomeView: View {
@@ -16,7 +16,7 @@ struct WelcomeView: View {
                         .frame(width: 76, height: 76)
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("WELCOME TO FACTORY LOG")
+                        Text("WELCOME TO WORK TRACEBOOK")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(Color.accentColor)
                             .tracking(1)
@@ -26,7 +26,7 @@ struct WelcomeView: View {
                     }
                 }
 
-                Text("Coding agents write a one-line report each time they finish something. Factory Log turns those reports into a timeline of your day and your week, and shows where the time went, project by project.")
+                Text("Coding agents write a one-line report each time they finish something. Work Tracebook turns those reports into a timeline of your day and your week, and shows where the time went, project by project.")
                     .font(.title3)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -34,7 +34,7 @@ struct WelcomeView: View {
                 SetupChecklist(showsWaitingStep: true)
 
                 Label {
-                    Text("Everything stays on this Mac, in `~/Library/Application Support/Factory Log`. Factory Log never reads your code, diffs or terminal output.")
+                    Text("Everything stays on this Mac, in `~/Library/Application Support/Factory Log`. Work Tracebook never reads your code, diffs or terminal output.")
                 } icon: {
                     Image(systemName: "lock.fill")
                 }
@@ -92,7 +92,7 @@ struct SetupChecklist: View {
                         .disabled(setup.codex)
 
                         Button(setup.cursor ? "Cursor Connected" : "Connect Cursor") {
-                            perform("Installed the Factory Log rule for Cursor.") {
+                            perform("Installed the Work Tracebook rule for Cursor.") {
                                 _ = try installer.installCursorRule()
                             }
                         }
@@ -174,7 +174,7 @@ struct SetupChecklist: View {
 
     private var commandLineDetail: LocalizedStringKey {
         guard isOffPath else {
-            return "Agents run `factorylog` to report their work. Factory Log puts it in `~/.local/bin`."
+            return "Agents run `factorylog` to report their work. Work Tracebook puts it in `~/.local/bin`."
         }
         if LoginShell.isZsh {
             return "It's in `~/.local/bin`, but your shell doesn't look there, so agents can't run it. Add that folder to your PATH."

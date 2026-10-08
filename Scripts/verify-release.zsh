@@ -3,9 +3,9 @@
 set -euo pipefail
 
 ROOT=${0:A:h:h}
-APP_PATH="$ROOT/.build/Factory Log.app"
+APP_PATH="$ROOT/.build/Work Tracebook.app"
 PLIST_PATH="$APP_PATH/Contents/Info.plist"
-APP_EXECUTABLE="$APP_PATH/Contents/MacOS/FactoryLog"
+APP_EXECUTABLE="$APP_PATH/Contents/MacOS/Work Tracebook"
 CLI_EXECUTABLE="$APP_PATH/Contents/Helpers/factorylog"
 cd "$ROOT"
 EXPECTED_VERSION=$(sed -n 's/^ *public static let current = "\(.*\)"$/\1/p' Sources/FactoryLogCore/FactoryLogVersion.swift)
@@ -92,4 +92,4 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 python3 Scripts/benchmark-event-store.py --cli "$CLI_EXECUTABLE" --events 10000 --reports 3
 
-print "Factory Log $EXPECTED_VERSION release verification passed."
+print "Work Tracebook $EXPECTED_VERSION release verification passed."

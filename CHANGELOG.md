@@ -1,10 +1,15 @@
 # Changelog
 
-Factory Log follows semantic versioning.
+Work Tracebook follows semantic versioning.
+
+## 1.3.0 (October 8, 2026)
+
+- Renamed the app to Work Tracebook.
+- Updated its GitHub repository, app bundle and download names. Existing saved data and commands still work.
 
 ## 1.2.0 — 2026-10-03
 
-- **Signed and notarized.** Factory Log is now signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS no longer says it "could not verify Factory Log is free of malware", so you don't need **Open Anyway** or Terminal. It asks the usual question about opening an app downloaded from the internet, and you click **Open**.
+- **Signed and notarized.** Work Tracebook is now signed with my Apple Developer ID and notarized by Apple. The first time you open it, macOS no longer says it "could not verify Work Tracebook is free of malware", so you don't need **Open Anyway** or Terminal. It asks the usual question about opening an app downloaded from the internet, and you click **Open**.
 - Nothing else changed. Your event log, the `factorylog` CLI and the agent instructions stay the same.
 
 ## 1.1.0 — 2026-10-01

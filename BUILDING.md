@@ -25,7 +25,7 @@ Release builds are universal by default. Set `FACTORYLOG_UNIVERSAL=0` for a quic
 
 Release builds sign with Flavio's Developer ID when that certificate is in the keychain, and ad hoc otherwise. Set `FACTORYLOG_SIGN_IDENTITY` to override the identity, or to `-` for ad hoc on purpose.
 
-The assembled app is `.build/Factory Log.app`. It contains the CLI at `Contents/Helpers/factorylog` and the agent templates under `Contents/Resources/Integrations`. Debug builds also include the snapshot hook in `DebugSnapshot.swift`, which release builds compile out.
+The assembled app is `.build/Work Tracebook.app`. It contains the CLI at `Contents/Helpers/factorylog` and the agent templates under `Contents/Resources/Integrations`. Debug builds also include the snapshot hook in `DebugSnapshot.swift`, which release builds compile out.
 
 ## Verify the release contract
 
@@ -41,7 +41,7 @@ This runs the tests, compiles the Python scripts, builds a universal release app
 zsh Scripts/build-release.zsh
 ```
 
-This writes `dist/Factory-Log-<version>.zip` with `Factory Log.app` at its top. When the app is Developer ID signed, it notarizes with Apple, staples the ticket, recreates the zip, checks the signature survived zipping, and runs Gatekeeper assessment. It prints the SHA-256. [DISTRIBUTION.md](DISTRIBUTION.md) covers the rest of a release.
+This writes `dist/Work-Tracebook-<version>.zip` with `Work Tracebook.app` at its top. When the app is Developer ID signed, it notarizes with Apple, staples the ticket, recreates the zip, checks the signature survived zipping, and runs Gatekeeper assessment. It prints the SHA-256. [DISTRIBUTION.md](DISTRIBUTION.md) covers the rest of a release.
 
 ## Screenshots and banner
 
@@ -50,4 +50,4 @@ zsh Scripts/screenshots.zsh
 swift Scripts/render-banner.swift
 ```
 
-The screenshots come from `Scripts/make-demo-log.py`, four weeks of invented work, never from a real event log. The script quits Factory Log while it runs.
+The screenshots come from `Scripts/make-demo-log.py`, four weeks of invented work, never from a real event log. The script quits Work Tracebook while it runs.

@@ -6,7 +6,7 @@ func cliReportsItsReleaseVersion() throws {
     let result = try runCLI(["--version"])
 
     #expect(result.status == 0)
-    #expect(result.stdout == "factorylog 1.2.0\n")
+    #expect(result.stdout == "factorylog 1.3.0\n")
     #expect(result.stderr.isEmpty)
 }
 
@@ -28,7 +28,7 @@ func cliCapabilitiesManifestEncodesExpectedKeys() throws {
 
     let manifest = try json(result.stdout)
     #expect(manifest["name"] as? String == "factorylog")
-    #expect(manifest["version"] as? String == "1.2.0")
+    #expect(manifest["version"] as? String == "1.3.0")
     #expect(manifest["summary"] as? String != nil)
     #expect((manifest["capabilities"] as? [[String: Any]])?.isEmpty == false)
     #expect((manifest["changelog"] as? [[String: Any]])?.isEmpty == false)

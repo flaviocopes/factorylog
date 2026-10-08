@@ -5,7 +5,7 @@ import FactoryLogCore
 @main
 struct FactoryLogApp: App {
     init() {
-        AppUpdater.shared.start(repository: "flaviocopes/factorylog")
+        AppUpdater.shared.start(repository: "flaviocopes/work-tracebook")
 
         #if DEBUG
         if DebugSnapshot.usesActiveWindow {

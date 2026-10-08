@@ -1,4 +1,4 @@
-# Factory Log
+# Work Tracebook
 
 Use `factorylog` for work that creates a durable outcome such as code,
 configuration, content, documentation, a commit, or a deployment.

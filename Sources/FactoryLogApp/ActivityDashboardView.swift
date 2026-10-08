@@ -1,7 +1,7 @@
 import SwiftUI
 import FactoryLogCore
 
-/// The project-first work overview shown when the Factory Log logo is selected.
+/// The project-first work overview shown when the Work Tracebook logo is selected.
 struct ActivityDashboardView: View {
     let events: [FactoryLogEvent]
     let dailyAggregates: [FactoryLogDailyAggregate]

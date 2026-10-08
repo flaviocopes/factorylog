@@ -38,7 +38,7 @@ struct AgentSetupStatus {
         guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
             return false
         }
-        return contents.contains("factorylog start") || contents.contains("Record durable work in Factory Log")
+        return contents.contains("factorylog start") || contents.contains("Record durable work in Work Tracebook") || contents.contains("Record durable work in Factory Log")
     }
 }
 
@@ -94,7 +94,7 @@ enum LoginShell {
         process.arguments = ["-l", "-c", command]
         process.currentDirectoryURL = FileManager.default.homeDirectoryForCurrentUser
         // Start from the PATH launchd gives every app, so the answer comes from
-        // the shell's own config, not from how Factory Log happened to be opened.
+        // the shell's own config, not from how Work Tracebook happened to be opened.
         var environment = ProcessInfo.processInfo.environment
         environment["PATH"] = "/usr/bin:/bin:/usr/sbin:/sbin"
         process.environment = environment
@@ -165,7 +165,7 @@ struct AgentIntegrationInstaller {
         var errorDescription: String? {
             switch self {
             case .missingBundledFile(let name):
-                "The app bundle does not contain \(name). Reinstall Factory Log."
+                "The app bundle does not contain \(name). Reinstall Work Tracebook."
             case .codexSandboxNeedsEdit(let folder):
                 "Added the instructions, but Codex's sandbox can't write the log yet. In ~/.codex/config.toml, add \"\(folder)\" to writable_roots under [sandbox_workspace_write]."
             }
@@ -202,7 +202,7 @@ struct AgentIntegrationInstaller {
             .appending(path: ".zshenv", directoryHint: .notDirectory)
         let existing = (try? String(contentsOf: destination, encoding: .utf8)) ?? ""
         guard !existing.contains(Self.pathLine) else { return }
-        try append("# Lets coding agents run factorylog. Added by Factory Log.\n\(Self.pathLine)", to: destination)
+        try append("# Lets coding agents run factorylog. Added by Work Tracebook.\n\(Self.pathLine)", to: destination)
     }
 
     /// Adds the instructions, and the log folder to Codex's sandbox. A config
@@ -261,8 +261,8 @@ struct AgentIntegrationInstaller {
         let start = [
             "factorylog start --task-id \(taskID)",
             "--title 'Test report'",
-            "--summary 'Sent a test report from Factory Log.'",
-            "--project-name 'Factory Log'",
+            "--summary 'Sent a test report from Work Tracebook.'",
+            "--project-name 'Work Tracebook'",
             "--project-path \(LoginShell.quoted(CodexSandbox.logFolder))"
         ].joined(separator: " ")
         let archive = "factorylog archive --task-id \(taskID) --summary 'The test report arrived, so agents can report their work.'"

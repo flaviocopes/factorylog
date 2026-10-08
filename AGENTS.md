@@ -1,6 +1,6 @@
-# Factory Log
+# Work Tracebook
 
-Factory Log is a native macOS app, a companion CLI, and a shared core library in one Swift 6.2 package. Coding agents report finished work through the CLI, and the app turns those reports into a timeline of each day and week. The event log stays local, append-only, and readable without the app.
+Work Tracebook is a native macOS app, a companion CLI, and a shared core library in one Swift 6.2 package. Coding agents report finished work through the CLI, and the app turns those reports into a timeline of each day and week. The event log stays local, append-only, and readable without the app.
 
 This file is public. Keep notes about your own machine in `.cursor/rules/*.local.mdc`, which git ignores.
 
@@ -28,10 +28,10 @@ Requires macOS 15 and Swift 6.2 (Xcode 26).
 
 ```sh
 swift test                               # core and CLI tests
-zsh Scripts/build-app.zsh debug          # .build/Factory Log.app
-open ".build/Factory Log.app"
+zsh Scripts/build-app.zsh debug          # .build/Work Tracebook.app
+open ".build/Work Tracebook.app"
 zsh Scripts/verify-release.zsh           # tests, universal release build, signatures, concurrent writes
-zsh Scripts/build-release.zsh            # dist/Factory-Log-<version>.zip; notarizes when Developer ID signed
+zsh Scripts/build-release.zsh            # dist/Work-Tracebook-<version>.zip; notarizes when Developer ID signed
 zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated demo log
 ```
 
@@ -43,7 +43,7 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - User-facing mutations go through `EventStore.appendValidated(_:)`. Don't bypass its cross-process transaction.
 - Concurrency changes need a multi-writer regression test.
 - `Sources/FactoryLogApp/AppUpdater.swift` is a copy of a template shared by several apps. Don't edit it here.
-- Releases are signed with Flavio's Developer ID (team `DGFKNTAG99`) with the hardened runtime, and notarized by `Scripts/build-release.zsh`. It needs the certificate in the keychain and a notarytool keychain profile named `notary`. CI and forks have no certificate, so `Scripts/build-app.zsh` signs ad-hoc there. The release contract, or installed copies can't update: the tag is `vX.Y.Z`, equal to `CFBundleShortVersionString` in `Resources/FactoryLog-Info.plist` and `FactoryLogVersion.current`. The release is the latest one, not a draft or prerelease, with one universal zip made by `Scripts/build-release.zsh`, `Factory Log.app` at its top. The notes start with what's new, since the update dialog shows them up to `## Install`.
+- Releases are signed with Flavio's Developer ID (team `DGFKNTAG99`) with the hardened runtime, and notarized by `Scripts/build-release.zsh`. It needs the certificate in the keychain and a notarytool keychain profile named `notary`. CI and forks have no certificate, so `Scripts/build-app.zsh` signs ad-hoc there. The release contract, or installed copies can't update: the tag is `vX.Y.Z`, equal to `CFBundleShortVersionString` in `Resources/FactoryLog-Info.plist` and `FactoryLogVersion.current`. The release is the latest one, not a draft or prerelease, with one universal zip made by `Scripts/build-release.zsh`, `Work Tracebook.app` at its top. The notes start with what's new, since the update dialog shows them up to `## Install`.
 - Screenshots and videos use generated demo data, never a real event log.
 - After changing anything under `Sources/`, rebuild and relaunch the app bundle (`.cursor/rules/restart-app-after-change.mdc`).
 
@@ -65,6 +65,10 @@ zsh Scripts/screenshots.zsh              # docs/ screenshots from a generated de
 - Work done inside an agent's own folder (`~/.cursor`, `~/.codex`, `~/.claude`, `~/.agents`) never shows in the app.
 - `Scripts/import-git-history.py` backfills gaps from local Git commits: one task per 45-minute commit session, skipping commits existing tasks already cover. Re-runs are safe because task IDs are deterministic. It sends commit subjects to `cursor-agent` for titles unless you pass `--no-titles`.
 - Agents run the `factorylog` copy in `~/.local/bin`, which only Install or Reinstall CLI and `Scripts/install-cli.zsh` write. App updates don't refresh it, so it can be older than the source. Reinstall it before testing CLI changes through an agent.
-- `docs/rfcs/` holds the draft DARP RFC and schema. Factory Log follows DARP's ideas, but its schema version 1 records aren't DARP 1.0 records and no adapter exists, so don't call its output DARP.
+- `docs/rfcs/` holds the draft DARP RFC and schema. Work Tracebook follows DARP's ideas, but its schema version 1 records aren't DARP 1.0 records and no adapter exists, so don't call its output DARP.
 - `Scripts/verify-release.zsh` fails if any tracked file contains the builder's home folder path, so tracked files use `~` or repo-relative paths.
 - `screencapture` doesn't work from an agent shell without Screen Recording permission. Debug builds draw their own window on a distributed notification instead; see `.cursor/rules/restart-app-after-change.mdc`.
+
+## Naming compatibility
+
+The public app name is Work Tracebook. Keep its existing bundle ID, saved data paths, URL schemes, CLI commands and internal Swift targets so installed copies and agent integrations remain compatible. Use the renamed checkout folder and GitHub repository in new links and build instructions.

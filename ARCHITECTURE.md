@@ -1,6 +1,6 @@
 # Architecture
 
-Factory Log is a local-first macOS app with three Swift Package Manager targets.
+Work Tracebook is a local-first macOS app with three Swift Package Manager targets.
 
 ## Targets
 
@@ -42,9 +42,9 @@ The primary store is newline-delimited JSON at:
 ~/Library/Application Support/Factory Log/events.jsonl
 ```
 
-Each record is self-contained. A sibling lock file coordinates Factory Log
+Each record is self-contained. A sibling lock file coordinates Work Tracebook
 writers. The narrative cache is `narratives.json`. Neither file is synced or
-uploaded by Factory Log.
+uploaded by Work Tracebook.
 
 Confirmed history compaction rewrites the detailed event file atomically and
 stores preserved counts in `daily-aggregates.json`. It never runs automatically,

@@ -295,7 +295,7 @@ enum FactoryLogCLI {
 
     private static let usage = """
     factorylog \(FactoryLogVersion.current)
-    Records short, agent-written task updates for the Factory Log app.
+    Records short, agent-written task updates for the Work Tracebook app.
 
     Usage: factorylog <command> [options]
 
@@ -308,12 +308,12 @@ enum FactoryLogCLI {
     Start options:
       --project-path <path>  Absolute project path. Defaults to the current directory.
       --project-name <name>  Project name. Defaults to the project directory name.
-      --task-id <id>         Stable task ID. Factory Log generates one when omitted.
+      --task-id <id>         Stable task ID. Work Tracebook generates one when omitted.
 
     Shared options:
       --source <tool>        Source identifier, such as codex or cursor. Defaults to other.
       --session-id <id>      Optional source session ID. Codex uses CODEX_THREAD_ID when omitted.
-      --store <path>         Event file. Defaults to the Factory Log application support folder.
+      --store <path>         Event file. Defaults to the Work Tracebook application support folder.
       --timestamp <time>     RFC 3339 event time. Defaults to the current time.
 
     Successful commands print one JSON object to stdout. Errors print JSON to stderr.

@@ -223,7 +223,7 @@ struct AppSettingsView: View {
                     }
                     .disabled(setup.codex)
                     Button(setup.cursor ? "Cursor Connected" : "Connect Cursor") {
-                        performSetup("Installed the Factory Log Cursor rule.") {
+                        performSetup("Installed the Work Tracebook Cursor rule.") {
                             _ = try installer.installCursorRule()
                         }
                     }

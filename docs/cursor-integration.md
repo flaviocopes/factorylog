@@ -1,6 +1,6 @@
 # Cursor integration
 
-Factory Log ships a portable always-apply Cursor rule at
+Work Tracebook ships a portable always-apply Cursor rule at
 `Integrations/cursor-factory-log.mdc`. **Connect Cursor**, on the welcome
 screen or in Settings, copies this rule to `~/.cursor/rules/factory-log.mdc`.
 

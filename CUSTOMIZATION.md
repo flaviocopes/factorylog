@@ -1,6 +1,6 @@
 # Customization
 
-Factory Log is MIT-licensed and intended to be changed, rebranded, or used as a
+Work Tracebook is MIT-licensed and intended to be changed, rebranded, or used as a
 starting point for another local activity product.
 
 ## Rebrand safely

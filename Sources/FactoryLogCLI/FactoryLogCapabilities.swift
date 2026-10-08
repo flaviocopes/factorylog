@@ -24,10 +24,10 @@ enum FactoryLogCapabilities {
     static let manifest = Manifest(
         name: "factorylog",
         version: FactoryLogVersion.current,
-        summary: "Records agent task starts, progress reports, and archives in Factory Log's local event log.",
+        summary: "Records agent task starts, progress reports, and archives in Work Tracebook's local event log.",
         capabilities: [
             Manifest.Capability(
-                description: "Start a new task in the Factory Log event log",
+                description: "Start a new task in the Work Tracebook event log",
                 command: "factorylog start --title \"Add account settings\" --summary \"Started the settings screen.\" --source cursor"
             ),
             Manifest.Capability(
@@ -52,6 +52,7 @@ enum FactoryLogCapabilities {
             )
         ],
         changelog: [
+            Manifest.Release(version: "1.3.0", date: "2026-10-08", changes: ["Renamed the app to Work Tracebook. Existing commands and saved data still work."]),
             Manifest.Release(
                 version: "1.2.0",
                 date: "2026-10-03",

@@ -84,7 +84,7 @@ public struct FactoryLogEvent: Codable, Identifiable, Equatable, Sendable {
         self.summary = summary
     }
 
-    /// The archive Factory Log appends on its own a day after a task started.
+    /// The archive Work Tracebook appends on its own a day after a task started.
     /// It closes the task but records no work.
     public var isAutomaticArchive: Bool {
         kind == .archived && summary == EventStore.automaticArchiveSummary

@@ -27,15 +27,16 @@ swift build "${BUILD_ARGS[@]}" --product factorylog
 
 BIN_PATH=$(swift build "${BUILD_ARGS[@]}" --show-bin-path)
 
-APP_PATH="$ROOT/.build/Factory Log.app"
+APP_PATH="$ROOT/.build/Work Tracebook.app"
 CONTENTS_PATH="$APP_PATH/Contents"
 MACOS_PATH="$CONTENTS_PATH/MacOS"
 RESOURCES_PATH="$CONTENTS_PATH/Resources"
 HELPERS_PATH="$CONTENTS_PATH/Helpers"
 
+rm -rf "$APP_PATH"
 mkdir -p "$MACOS_PATH" "$RESOURCES_PATH" "$HELPERS_PATH"
 rm -f "$CONTENTS_PATH/AppIcon-Info.plist"
-cp "$BIN_PATH/FactoryLogApp" "$MACOS_PATH/FactoryLog"
+cp "$BIN_PATH/FactoryLogApp" "$MACOS_PATH/Work Tracebook"
 cp "$BIN_PATH/factorylog" "$HELPERS_PATH/factorylog"
 cp "$ROOT/Resources/FactoryLog-Info.plist" "$CONTENTS_PATH/Info.plist"
 rm -rf "$RESOURCES_PATH/Integrations"
@@ -46,7 +47,7 @@ xcrun actool "$ROOT/Resources/Assets.xcassets" \
   --minimum-deployment-target 15.0 \
   --app-icon AppIcon \
   --output-partial-info-plist "$ROOT/.build/AppIcon-Info.plist"
-chmod +x "$MACOS_PATH/FactoryLog"
+chmod +x "$MACOS_PATH/Work Tracebook"
 chmod +x "$HELPERS_PATH/factorylog"
 
 if [[ "$SIGN_IDENTITY" != "-" ]]; then

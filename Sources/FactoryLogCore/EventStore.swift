@@ -114,7 +114,7 @@ public struct EventStore: Sendable {
         self.url = url
     }
 
-    /// Appends a trusted event while serializing with every other Factory Log writer.
+    /// Appends a trusted event while serializing with every other Work Tracebook writer.
     /// Importers and tests can use this lower-level operation; user-facing mutations
     /// should use `appendValidated(_:)` so state validation shares the same lock.
     public func append(_ event: FactoryLogEvent) throws {

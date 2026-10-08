@@ -2,7 +2,7 @@
 
 ## Data boundary
 
-Factory Log records only the titles and summaries explicitly supplied by coding
+Work Tracebook records only the titles and summaries explicitly supplied by coding
 agents. It does not inspect source code, Git history, diffs, terminal output, or
 browser data. Events and cached narratives remain in the user's Application
 Support directory.
@@ -18,7 +18,7 @@ backup when the original detailed summaries may still be needed.
 
 ## Concurrent writers
 
-Factory Log writers coordinate through an interprocess lock. Keep mutations
+Work Tracebook writers coordinate through an interprocess lock. Keep mutations
 inside `EventStore.appendValidated(_:)`; bypassing it can weaken task-state
 validation even if a raw append remains offset-safe.
 

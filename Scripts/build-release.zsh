@@ -1,9 +1,9 @@
 #!/bin/zsh
 # Builds the universal release app, signs with Developer ID when the certificate
 # is in the keychain (ad hoc on CI and forks), notarizes when signed that way,
-# and writes dist/Factory-Log-<version>.zip for a GitHub release. The zip holds
-# Factory Log.app at its top, which is what the in-app updater expects.
-# dist/Factory Log.app stays next to it: the Releases app takes the project's
+# and writes dist/Work-Tracebook-<version>.zip for a GitHub release. The zip holds
+# Work Tracebook.app at its top, which is what the in-app updater expects.
+# dist/Work Tracebook.app stays next to it: the Releases Manager app takes the project's
 # name and icon from it.
 # Usage: zsh Scripts/build-release.zsh
 
@@ -12,9 +12,9 @@ set -euo pipefail
 ROOT=${0:A:h:h}
 cd "$ROOT"
 VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Resources/FactoryLog-Info.plist)
-BUILT_APP="$ROOT/.build/Factory Log.app"
-APP="$ROOT/dist/Factory Log.app"
-ZIP="$ROOT/dist/Factory-Log-$VERSION.zip"
+BUILT_APP="$ROOT/.build/Work Tracebook.app"
+APP="$ROOT/dist/Work Tracebook.app"
+ZIP="$ROOT/dist/Work-Tracebook-$VERSION.zip"
 CHECK=$(mktemp -d)
 trap 'rm -rf "$CHECK"' EXIT
 
@@ -23,7 +23,7 @@ rm -rf "$ZIP" "$APP"
 FACTORYLOG_UNIVERSAL=1 zsh Scripts/build-app.zsh release >/dev/null
 ditto "$BUILT_APP" "$APP"
 
-lipo "$APP/Contents/MacOS/FactoryLog" -verify_arch arm64 x86_64
+lipo "$APP/Contents/MacOS/Work Tracebook" -verify_arch arm64 x86_64
 lipo "$APP/Contents/Helpers/factorylog" -verify_arch arm64 x86_64
 codesign --verify --deep --strict "$APP"
 
@@ -52,7 +52,7 @@ if [[ "$TEAM" == DGFKNTAG99 ]]; then
 fi
 
 ditto -x -k "$ZIP" "$CHECK"
-codesign --verify --deep --strict "$CHECK/Factory Log.app"
+codesign --verify --deep --strict "$CHECK/Work Tracebook.app"
 
 print "$ZIP"
 shasum -a 256 "$ZIP"

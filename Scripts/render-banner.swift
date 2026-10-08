@@ -7,7 +7,7 @@
 import AppKit
 import SwiftUI
 
-let name = "Factory Log"
+let name = "Work Tracebook"
 let tagline = "See what your coding agents did,\nand where your time went."
 let chips = ["Day timeline", "Week at a glance", "Stays on your Mac"]
 let size = CGSize(width: 1280, height: 560)

@@ -1,64 +1,47 @@
 ---
-description: Always rebuild and restart the Factory Log app after changing app or core source
+description: Rebuild Work Tracebook, verify changes in the test VM, then restart the local app
 alwaysApply: true
 ---
 
-# Restart the app after every change
+# Rebuild and restart after a source change
 
-After changing anything under `Sources/`, rebuild the app bundle and restart the
-running app. Do not leave the user looking at a stale build. The app does not
-hot-reload, so an unrestarted app still shows the previous code.
-
-Run this from the repository root:
+After changing anything under `Sources/`, rebuild the app bundle. Verify its UI
+in the test VM so testing leaves the user's Mac available.
 
 ```bash
-osascript -e 'quit app "Factory Log"' 2>/dev/null; sleep 1
-pkill -f 'MacOS/FactoryLog' 2>/dev/null; sleep 1
 zsh Scripts/build-app.zsh debug
-open ".build/Factory Log.app"
+testvm note 'Checking the Work Tracebook change'
+testvm open ".build/Work Tracebook.app"
+testvm ui "Work Tracebook"
+testvm shot "Work Tracebook"
 ```
 
-Always restart the `.app` bundle, not the bare `.build/debug/FactoryLogApp`
-binary. Only the bundle has `Info.plist` and a code signature, so only it
-behaves like a real GUI app.
-
-Then confirm the new process is alive:
+After the VM check passes, gracefully quit the local copy and open the new build.
+Launch it without test data environment variables.
 
 ```bash
-pgrep -fl 'MacOS/FactoryLog'
+osascript -e 'quit app "Work Tracebook"'
+while pgrep -x 'Work Tracebook' >/dev/null; do sleep 0.5; done
+env -u FACTORYLOG_EVENTS_FILE -u FACTORYLOG_STORE open ".build/Work Tracebook.app"
 ```
 
-## Verifying the window
+The shipped executable is `Contents/MacOS/Work Tracebook`. The SwiftPM product
+remains `FactoryLogApp`; launch the `.app` bundle, which has the Info.plist and
+code signature.
 
-`swift build` succeeding is not proof the UI works. To check the app really has
-an on-screen window, ask the window server. `System Events` via `osascript`
-fails here with "not allowed assistive access", so do not rely on it.
+# Demo screenshots
 
-`screencapture` does not work from the agent shell: it lacks Screen Recording
-permission, so full-screen captures show only the wallpaper and
-`screencapture -l <id>` fails with "could not create image from window". This
-is not the app being broken.
-
-To see the window, ask the debug build to draw itself. It listens for a
-distributed notification whose object is `screen|output-path`. `screen` is
-`today`, `yesterday`, `week` or `insights`, optionally followed by
-`@<project path>` to open that project's panel in Insights. Leave it empty to
-keep the current screen.
+Debug builds listen for `dev.factorylog.debug.snapshot`. Send a distributed
+notification inside the VM with an object of the form `screen|output-path`.
+Screens are `today`, `yesterday`, `week` and `insights`, optionally followed by
+`@<project path>` to open a project panel. An empty screen keeps the current view.
 
 ```bash
-swift -e 'import Foundation; DistributedNotificationCenter.default().postNotificationName(.init("dev.factorylog.debug.snapshot"), object: "week|/tmp/week.png", userInfo: nil, deliverImmediately: true)'
+testvm run 'swift -e '\''import Foundation; DistributedNotificationCenter.default().postNotificationName(.init("dev.factorylog.debug.snapshot"), object: "week|/tmp/week.png", userInfo: nil, deliverImmediately: true)'\'''
+testvm pull /tmp/week.png /tmp/work-tracebook-week.png
 ```
 
-The PNG appears about a second later. A window launched from a script draws as
-inactive, so for publishable images launch with `--args -DebugActiveWindow YES`,
-or run `zsh Scripts/screenshots.zsh`, which does that against a demo log. The hook only exists in debug builds,
-and `Scripts/verify-release.zsh` replaces the bundle with a release build, so
-rebuild with `build-app.zsh debug` before taking snapshots.
-
-If a restored window is mispositioned or invisible, clear the saved window
-state and relaunch. Don't delete the `dev.factorylog.app` defaults domain: it
-holds user preferences such as hidden projects.
-
-```bash
-rm -rf ~/Library/Saved\ Application\ State/dev.factorylog.app.savedState
-```
+Launch with `-DebugActiveWindow YES` for publishable captures, and use a generated
+demo log from `Scripts/make-demo-log.py`. The snapshot hook exists only in debug
+builds. Keep the bundle ID `dev.factorylog.app` and its defaults domain, which
+holds the user's preferences.

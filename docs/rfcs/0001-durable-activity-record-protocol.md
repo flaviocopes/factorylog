@@ -38,7 +38,7 @@ A durable activity record says that a task started, reached a meaningful milesto
 
 DARP standardizes the record, its lifecycle, and the way activity counts are derived. It does not standardize a dashboard, command-line interface, storage engine, transport, or management score.
 
-Factory Log is the first reference application. It is not part of the protocol.
+Work Tracebook is the first reference application. It is not part of the protocol.
 
 ## 2. Goals
 
@@ -163,7 +163,7 @@ Example:
   "kind": "task.progressed",
   "project": {
     "id": "urn:uuid:eb0d9db1-82aa-4d44-8e45-a71452c0214c",
-    "name": "Factory Log"
+    "name": "Work Tracebook"
   },
   "task": {
     "id": "task_6b8d9c1780e24ac5a76c88f52fb51d35",
@@ -444,7 +444,7 @@ Example:
   "outcomes": [
     "Defined the DARP lifecycle and record format.",
     "Added a machine-readable schema and valid example stream.",
-    "Published the protocol from the Factory Log documentation."
+    "Published the protocol from the Work Tracebook documentation."
   ]
 }
 ```
@@ -536,13 +536,13 @@ A conforming activity view:
 - keeps outcome text available;
 - follows the interpretation safeguards in Section 10.4.
 
-## 15. Factory Log application profile
+## 15. Work Tracebook application profile
 
-Factory Log schema version 1 predates DARP. It already implements the central idea, but it is not wire-compatible without an adapter.
+Work Tracebook schema version 1 predates DARP. It already implements the central idea, but it is not wire-compatible without an adapter.
 
 The mapping is:
 
-| Factory Log v1 | DARP 1.0 |
+| Work Tracebook v1 | DARP 1.0 |
 | --- | --- |
 | `schemaVersion` | Adapter emits `specVersion` |
 | `id` | `id` |
@@ -558,9 +558,9 @@ The mapping is:
 | `source` | `source` |
 | `summary` | `summary` |
 
-Factory Log currently counts every stored lifecycle event as an update. A strict DARP activity view counts only progressed and completed outcomes. The two values SHOULD have different labels until Factory Log implements the DARP measurement profile.
+Work Tracebook currently counts every stored lifecycle event as an update. A strict DARP activity view counts only progressed and completed outcomes. The two values SHOULD have different labels until Work Tracebook implements the DARP measurement profile.
 
-Factory Log remains free to use JSONL, local storage, a macOS dashboard, and its own command-line interface. Those are application choices, not protocol requirements.
+Work Tracebook remains free to use JSONL, local storage, a macOS dashboard, and its own command-line interface. Those are application choices, not protocol requirements.
 
 ## 16. Related work
 

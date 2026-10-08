@@ -1,6 +1,6 @@
 # Configuration
 
-Factory Log works with no configuration after its CLI and one agent instruction
+Work Tracebook works with no configuration after its CLI and one agent instruction
 set are installed.
 
 ## Files
@@ -29,10 +29,10 @@ symlink stays one.
 Whether `factorylog` is on the PATH comes from running `command -v factorylog` in
 the user's login shell, because that shell, not the app, sets the PATH agents see.
 **Send a test report** runs `factorylog start` and `factorylog archive` the same
-way, for a closed task called "Test report" in a project named Factory Log.
+way, for a closed task called "Test report" in a project named Work Tracebook.
 
 The detailed-history setting controls only the preview and explicit purge
-action. Factory Log never compacts history on a timer or at launch.
+action. Work Tracebook never compacts history on a timer or at launch.
 
 ## Environment variables
 
